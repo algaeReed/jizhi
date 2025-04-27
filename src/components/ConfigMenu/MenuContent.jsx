@@ -8,6 +8,8 @@ import {
   SidebarTab,
   SegmentedControl,
   Spinner,
+  Switch,
+  Tablist,
   Text,
   InlineAlert,
 } from 'evergreen-ui';
@@ -30,6 +32,8 @@ const MenuContent = (props) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const {
+    refreshInterval,
+    setRefreshInterval,
     isPlaying,
     onPlayPauseSelect,
     showSearchBarChecked,
@@ -192,6 +196,17 @@ const MenuContent = (props) => {
           <InlineAlert intent="none" marginRight={15} marginLeft={15}>
             <p>波纹背景下使用左右键可以随机切换颜色</p>
           </InlineAlert>
+
+          <Menu.Item
+            icon={refreshInterval ? 'pause' : 'play'}
+            intent="success"
+            onSelect={() => {
+              setRefreshInterval(3);
+            }}
+            secondaryText={`${refreshInterval ? refreshInterval : 0}秒`}
+          >
+            {refreshInterval ? '暂停' : '自动刷新♻️'}
+          </Menu.Item>
         </Menu.Group>
       ),
     },
@@ -256,6 +271,8 @@ const MenuContent = (props) => {
 };
 
 MenuContent.propTypes = {
+  refreshInterval: PropTypes.number,
+  setRefreshInterval: PropTypes.func,
   children: PropTypes.any,
   showSearchBarChecked: PropTypes.bool,
   onShowSearchBarChange: PropTypes.func,

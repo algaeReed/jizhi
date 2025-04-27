@@ -28,6 +28,7 @@ class App extends Component {
     super(props);
 
     this.state = {
+      refreshInterval: 0,
       isPlaying: true,
       showSearchBarChecked: false,
       colorMode: 'os',
@@ -45,7 +46,7 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
+  initializeApp() {
     const hasZh = navigator.languages.includes('zh');
     document.title = hasZh ? '新标签页' : 'New Tab';
 
@@ -97,6 +98,24 @@ class App extends Component {
     );
   }
 
+  componentDidMount() {
+    this.initializeApp();
+    this.setupAutoRefresh(); // 检查是否需要自动刷新
+  }
+
+  setupAutoRefresh = () => {
+    // 清除旧的定时器（避免重复）
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+    }
+    // 如果 refreshInterval 有值（单位：秒），则启动定时器
+    if (this.state.refreshInterval) {
+      this.refreshTimer = setInterval(() => {
+        this.initializeApp(); // 定期执行初始化
+      }, this.state.refreshInterval * 1000); // 转换为毫秒
+    }
+  };
+
   componentDidUpdate(prevProps, prevState) {
     if (prevState.colorMode !== this.state.colorMode) {
       this.setState(() => ({
@@ -108,6 +127,18 @@ class App extends Component {
   }
 
   handlePlayPauseSelect = () => this.setState((state) => ({ isPlaying: !state.isPlaying }));
+  handleSetRefreshInterval = (interval) => {
+    console.log('set refresh interval', interval);
+    this.setState({ refreshInterval: this.state.refreshInterval === 0 ? interval : 0 }, () => {
+      this.setupAutoRefresh(); // 状态更新后重新配置定时器
+    });
+  };
+
+  componentWillUnmount() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer); // 避免内存泄漏
+    }
+  }
 
   handleShowSearchBarChange = () => {
     this.setState(
@@ -208,6 +239,7 @@ class App extends Component {
 
   render() {
     const {
+      refreshInterval,
       verses,
       isVerticalVerses,
       isPlaying,
@@ -255,6 +287,8 @@ class App extends Component {
           waveColor={waveColor.hex}
         />
         <ConfigMenu
+          refreshInterval={refreshInterval}
+          setRefreshInterval={this.handleSetRefreshInterval}
           onPlayPauseSelect={this.handlePlayPauseSelect}
           isPlaying={isPlaying}
           verticalVersesChecked={isVerticalVerses}
