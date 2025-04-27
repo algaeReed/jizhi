@@ -1,22 +1,20 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import {
-  Pane,
+  InlineAlert,
   Menu,
-  Tablist,
-  Switch,
-  SidebarTab,
+  Pane,
   SegmentedControl,
+  SidebarTab,
   Spinner,
   Switch,
   Tablist,
   Text,
-  InlineAlert,
 } from 'evergreen-ui';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { WAVES } from '../../constants/appConstants';
-import Legal from './Legal';
 import FontStatement from './FontStatement';
+import Legal from './Legal';
 import SaveBgMenuItem from './SaveBgMenuItem';
 
 const SwitchWrapper = styled.div`
